@@ -11,6 +11,7 @@ public class UserGroup extends BaseEntity{
 
     public Long getUserId() {
         return userId;
+
     }
 
     public void setUserId(Long userId) {
