@@ -1,5 +1,17 @@
 package com.zenve.feign;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.netflix.client.ClientFactory;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.BestAvailableRule;
@@ -8,6 +20,8 @@ import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import feign.Feign;
 import feign.Logger;
 import feign.Retryer;
+import feign.gson.GsonDecoder;
+import feign.gson.GsonEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.okhttp.OkHttpClient;
@@ -17,6 +31,10 @@ import feign.ribbon.RibbonClient;
 import feign.slf4j.Slf4jLogger;
 import okhttp3.ConnectionPool;
 
+import java.io.IOException;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,8 +66,8 @@ public class Request {
         return (T) CONNECTORS.computeIfAbsent(commandConfigKey, k -> {
             return Feign.builder()
 //                    .client(ribbonClient())
-                    .decoder(new JacksonDecoder())
-                    .encoder(new JacksonEncoder())
+                    .decoder(getJacksonDecoder())
+                    .encoder(getJacksonEncoder())
                     .errorDecoder(getRequestErrorDecoder())
                     .requestInterceptor(getRequestInterceptor())
                     .logger(getSlf4jLogger())
@@ -68,15 +86,12 @@ public class Request {
 
     }
 
-
     private static JacksonDecoder getJacksonDecoder() {
         if (jacksonDecoder == null) {
             jacksonDecoder = new JacksonDecoder();
         }
         return jacksonDecoder;
     }
-
-
     private static JacksonEncoder getJacksonEncoder() {
         if (jacksonEncoder == null) {
             jacksonEncoder = new JacksonEncoder();
@@ -132,4 +147,6 @@ public class Request {
         return new okhttp3.OkHttpClient.Builder().connectionPool(new ConnectionPool())
                 .build();
     }
+
+
 }

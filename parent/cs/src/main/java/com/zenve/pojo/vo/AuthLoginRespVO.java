@@ -1,5 +1,6 @@
 package com.zenve.pojo.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,8 @@ public class AuthLoginRespVO implements Serializable {
     private String accessToken;
 
     private String refreshToken;
-
-    private long expiresTime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime expiresTime;
 
 }

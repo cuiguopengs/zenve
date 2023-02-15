@@ -31,12 +31,10 @@ public class App extends Application
             authLoginReqVO.setPassword("admin123");
             authLoginReqVO.setCaptchaVerification("");
 
-            CommonResult<AuthLoginRespVO> login1 = Request.connector(LoginFeign.class).login(authLoginReqVO);
-            ApplicatonStore.setToken("Bearer c3c9c9bc848841408ac0afb4e6a22b82");
-            AuthLoginRespVO data = login1.getData();
-            long expiresTime = data.getExpiresTime();
-            Date date = new Date(expiresTime);
-            System.out.println(login1);
+//            CommonResult<AuthLoginRespVO> login1 = Request.connector(LoginFeign.class).login(authLoginReqVO);
+//            ApplicatonStore.setToken("Bearer c3c9c9bc848841408ac0afb4e6a22b82");
+//            AuthLoginRespVO data = login1.getData();
+//            System.out.println(login1);
         });
         stage.setScene(new Scene(button));
         stage.show();
